@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mastermind - Logic 80's</title>
+    <base href="/" />
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <audio id="bgMusic" src="audio/background.mp3" loop preload="auto"></audio>
+    <div id="app">
+        <div class="loading-screen">
+            <p class="loading-title">MASTERMIND</p>
+            <p class="loading-sub">Loading...</p>
+        </div>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        window.audioControl = {
+            _fadeTimer: null,
+            fadeIn: function (durationMs) {
+                var a = document.getElementById('bgMusic');
+                if (!a) return;
+                clearInterval(this._fadeTimer);
+                // Already playing at near-full volume — do nothing
+                if (!a.paused && a.volume > 0.9) return;
+                var dur = durationMs || 3000;
+                var steps = 60;
+                var interval = dur / steps;
+                var target = 1.0;
+                var increment = target / steps;
+                // Only reset volume and call play() if currently paused
+                if (a.paused) {
+                    a.volume = 0;
+                    a.currentTime = 454;
+                    a.play().catch(function () { });
+                }
+                var self = this;
+                this._fadeTimer = setInterval(function () {
+                    var v = Math.min(target, a.volume + increment);
+                    a.volume = v;
+                    if (v >= target) clearInterval(self._fadeTimer);
+                }, interval);
+            },
+            fadeOut: function (durationMs) {
+                var a = document.getElementById('bgMusic');
+                if (!a || a.paused) return;
+                clearInterval(this._fadeTimer);
+                var dur = durationMs || 3000;
+                var steps = 60;
+                var interval = dur / steps;
+                var startVol = a.volume;
+                if (startVol <= 0) { a.pause(); return; }
+                var decrement = startVol / steps;
+                var self = this;
+                this._fadeTimer = setInterval(function () {
+                    var v = Math.max(0, a.volume - decrement);
+                    a.volume = v;
+                    if (v <= 0) {
+                        clearInterval(self._fadeTimer);
+                        a.pause();
+                        a.currentTime = 454;
+                    }
+                }, interval);
+            }
+        };
+    </script>
+</body>
+</html>
