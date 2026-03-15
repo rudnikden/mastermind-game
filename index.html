@@ -5,18 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mastermind - Logic 80's</title>
     <base href="/mastermind-game/" />
+    <style>
+        html, body {
+            height: 100vh;
+            margin: 0;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+            font-family: 'Courier New', 'Lucida Console', Consolas, monospace;
+        }
+
+        #app {
+            min-height: 100vh;
+        }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 8px;
+            text-align: center;
+            transition: opacity .2s ease;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+        }
+
+        .loading-text {
+            color: #888;
+            letter-spacing: 4px;
+            font-size: .9rem;
+            text-transform: uppercase;
+        }
+    </style>
     <link href="css/site.css" rel="stylesheet" />
 </head>
 <body>
     <audio id="bgMusic" src="audio/background.mp3" loop preload="auto"></audio>
     <div id="app">
         <div class="loading-screen">
-            <p class="loading-title">MASTERMIND</p>
-            <p class="loading-sub">Loading...</p>
+            <p class="loading-text">Mastermind Loading...</p>
         </div>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script>
+        function removeLoadingScreen() {
+            var app = document.getElementById('app');
+            if (!app) return;
+
+            var loading = app.querySelector('.loading-screen');
+            if (loading) {
+                loading.classList.add('fade-out');
+                setTimeout(function () {
+                    loading.remove();
+                }, 200);
+            }
+        }
+
+        function forceInitialRepaint() {
+            requestAnimationFrame(function () {
+                void document.body.offsetHeight;
+                requestAnimationFrame(function () {
+                    void document.documentElement.offsetHeight;
+                });
+            });
+        }
+
         window.audioControl = {
             _ctx: null,
             _gain: null,
@@ -96,6 +153,12 @@
                 }, ms + 50);
             }
         };
+
+        Blazor.start()
+            .then(function () {
+                removeLoadingScreen();
+                forceInitialRepaint();
+            });
     </script>
 </body>
 </html>
