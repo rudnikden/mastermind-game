@@ -77,7 +77,13 @@ body::after {
 .subtitle {
     font-size: .95rem;
     letter-spacing: 5px;
-    margin-bottom: 36px;
+    margin-bottom: 6px;
+}
+.byline {
+    font-size: .7rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 30px;
 }
 .mode-hint {
     margin-top: 28px;
@@ -138,11 +144,15 @@ body::after {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    padding-left: 28px;
 }
 .confirm-btn {
     padding: 16px 48px;
     font-size: 1.1rem;
     letter-spacing: 4px;
+}
+.code-setting .color-picker {
+    padding-top: 20px;
 }
 
 /* =====================  GAME BOARD  ===================== */
@@ -165,7 +175,8 @@ body::after {
     padding-bottom: 6px;
     margin-bottom: 2px;
 }
-.board-title { font-size: 1.1rem; letter-spacing: 6px; margin-bottom: 4px; }
+.board-title { font-size: 1.1rem; letter-spacing: 6px; margin-bottom: 2px; }
+.board-byline { font-size: .7rem; color: var(--text-dim); }
 
 /* --- Board Body (scrollable rows) --- */
 
@@ -230,10 +241,15 @@ body::after {
 
 .color-picker {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+}
+.color-picker-row {
+    display: flex;
     gap: 8px;
     justify-content: center;
-    flex-wrap: wrap;
-    padding: 10px 0;
 }
 .peg-btn {
     width: 40px;
@@ -560,6 +576,56 @@ background: var(--icon-red);
     letter-spacing: 4px;
     min-width: 60px;
     text-align: center;
+}
+
+/* --- About Link --- */
+
+.about-link {
+    display: block;
+    margin: 36px auto 0;
+    font-family: inherit;
+    font-size: .75rem;
+    color: #aa9988;
+    letter-spacing: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color .2s, text-shadow .2s;
+    padding: 0;
+}
+.about-link:hover {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+}
+
+/* --- About Page --- */
+
+.about-page {
+    text-align: center;
+    max-width: 420px;
+    padding: 0 16px;
+}
+.about-page h2 {
+    font-size: 1.1rem;
+    letter-spacing: 6px;
+    margin-bottom: 24px;
+}
+.about-page p {
+    font-size: .75rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+.about-page a {
+    color: var(--neon-cyan);
+    text-decoration: none;
+}
+.about-page a:hover {
+    text-shadow: 0 0 6px var(--neon-cyan);
+}
+.about-page .btn-retro {
+    margin-top: 24px;
 }
 
 /* end of file */
