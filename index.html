@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mastermind - Logic 80's</title>
-    <base href="/mastermind-game/" />
+    <base href="/" />
     <link href="css/site.css" rel="stylesheet" />
 </head>
 <body>
@@ -33,7 +33,7 @@
                 // Only reset volume and call play() if currently paused
                 if (a.paused) {
                     a.volume = 0;
-                    a.currentTime = 454;
+                    a.currentTime = 0;
                     a.play().catch(function () { });
                 }
                 var self = this;
@@ -60,7 +60,7 @@
                     if (v <= 0) {
                         clearInterval(self._fadeTimer);
                         a.pause();
-                        a.currentTime = 454;
+                        a.currentTime = 0;
                     }
                 }, interval);
             }
