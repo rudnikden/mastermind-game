@@ -18,51 +18,82 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
         window.audioControl = {
-            _fadeTimer: null,
-            fadeIn: function (durationMs) {
+            _ctx: null,
+            _gain: null,
+            _connected: false,
+            _stopTimeout: null,
+
+            _init: function () {
+                if (this._ctx) return;
+                var AC = window.AudioContext || window.webkitAudioContext;
+                this._ctx = new AC();
+                this._gain = this._ctx.createGain();
+                this._gain.gain.value = 0;
+                this._gain.connect(this._ctx.destination);
+            },
+
+            _connect: function () {
+                if (this._connected) return;
+                this._init();
                 var a = document.getElementById('bgMusic');
                 if (!a) return;
-                clearInterval(this._fadeTimer);
-                // Already playing at near-full volume — do nothing
-                if (!a.paused && a.volume > 0.9) return;
-                var dur = durationMs || 3000;
-                var steps = 60;
-                var interval = dur / steps;
-                var target = 1.0;
-                var increment = target / steps;
-                // Only reset volume and call play() if currently paused
-                if (a.paused) {
-                    a.volume = 0;
-                    a.currentTime = 0;
-                    a.play().catch(function () { });
-                }
-                var self = this;
-                this._fadeTimer = setInterval(function () {
-                    var v = Math.min(target, a.volume + increment);
-                    a.volume = v;
-                    if (v >= target) clearInterval(self._fadeTimer);
-                }, interval);
+                var src = this._ctx.createMediaElementSource(a);
+                src.connect(this._gain);
+                this._connected = true;
             },
+
+            fadeIn: function (durationMs) {
+                this._connect();
+                var a = document.getElementById('bgMusic');
+                if (!a) return;
+
+                if (this._stopTimeout) {
+                    clearTimeout(this._stopTimeout);
+                    this._stopTimeout = null;
+                }
+
+                if (this._ctx.state === 'suspended') {
+                    this._ctx.resume();
+                }
+
+                var dur = (durationMs || 3000) / 1000;
+                var now = this._ctx.currentTime;
+
+                this._gain.gain.cancelScheduledValues(now);
+
+                if (a.paused) {
+                    a.currentTime = 0;
+                    this._gain.gain.setValueAtTime(0, now);
+                    a.play().catch(function () { });
+                } else {
+                    this._gain.gain.setValueAtTime(this._gain.gain.value, now);
+                }
+
+                this._gain.gain.linearRampToValueAtTime(1.0, now + dur);
+            },
+
             fadeOut: function (durationMs) {
+                if (!this._ctx || !this._connected) return;
                 var a = document.getElementById('bgMusic');
                 if (!a || a.paused) return;
-                clearInterval(this._fadeTimer);
-                var dur = durationMs || 3000;
-                var steps = 60;
-                var interval = dur / steps;
-                var startVol = a.volume;
-                if (startVol <= 0) { a.pause(); return; }
-                var decrement = startVol / steps;
-                var self = this;
-                this._fadeTimer = setInterval(function () {
-                    var v = Math.max(0, a.volume - decrement);
-                    a.volume = v;
-                    if (v <= 0) {
-                        clearInterval(self._fadeTimer);
-                        a.pause();
-                        a.currentTime = 0;
-                    }
-                }, interval);
+
+                if (this._stopTimeout) {
+                    clearTimeout(this._stopTimeout);
+                    this._stopTimeout = null;
+                }
+
+                var dur = (durationMs || 1000) / 1000;
+                var now = this._ctx.currentTime;
+
+                this._gain.gain.cancelScheduledValues(now);
+                this._gain.gain.setValueAtTime(this._gain.gain.value, now);
+                this._gain.gain.linearRampToValueAtTime(0, now + dur);
+
+                var ms = durationMs || 1000;
+                this._stopTimeout = setTimeout(function () {
+                    a.pause();
+                    a.currentTime = 0;
+                }, ms + 50);
             }
         };
     </script>

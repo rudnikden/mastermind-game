@@ -241,9 +241,9 @@ body::after {
 
 .color-picker {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 8px;
-    align-items: center;
+    justify-content: center;
     padding: 10px 0;
 }
 .color-picker-row {
@@ -626,6 +626,27 @@ background: var(--icon-red);
 }
 .about-page .btn-retro {
     margin-top: 24px;
+}
+
+/* --- Music Toggle --- */
+
+.music-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background .2s, box-shadow .2s;
+    line-height: 1;
+}
+.music-toggle:hover {
+    background: rgba(0, 0, 0, 0.75);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 
 /* end of file */
